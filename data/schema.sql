@@ -1,12 +1,13 @@
-CREATE TABLE Customer (
-    Customer_ID INT AUTO_INCREMENT PRIMARY KEY,
-    Customer_name VARCHAR(200) NOT NULL,
-    Email VARCHAR(100) UNIQUE,
-    City VARCHAR(50),
-    SignUp_Date DATE,
-    Customer_segment VARCHAR(50) -- Regular, VIP
+CREATE TABLE customers (
+    customer_id INT PRIMARY KEY,
+    customer_name VARCHAR(200) NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    city VARCHAR(50),
+    signup_date DATE,
+    customer_segment VARCHAR(50)
 );
-INSERT INTO customer VALUES
+
+INSERT INTO customers VALUES
 (1,'Aditya','aditya@gmail.com','Pune','2023-01-15','Premium'),
 (2,'Yukta','yukta@gmail.com','Mumbai','2023-02-10','Regular'),
 (3,'Aman','aman@gmail.com','Delhi','2023-02-20','Regular'),
@@ -18,15 +19,16 @@ INSERT INTO customer VALUES
 (9,'Arjun','arjun@gmail.com','Chennai','2023-04-10','Regular'),
 (10,'Meena','meena@gmail.com','Bangalore','2023-04-15','Premium');
 
-CREATE TABLE Product (
-    Product_ID INT AUTO_INCREMENT PRIMARY KEY,
-    Product_Name VARCHAR(200) NOT NULL,
-    Category VARCHAR(200),
-    Brand VARCHAR(100),
-    Price DECIMAL(10,2) NOT NULL,
-    Is_Active TINYINT(1) DEFAULT 1
+CREATE TABLE products (
+    product_id INT PRIMARY KEY,
+    product_name VARCHAR(200) NOT NULL,
+    category VARCHAR(200),
+    brand VARCHAR(100),
+    price DECIMAL(10,2) NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE
 );
-INSERT INTO product VALUES
+
+INSERT INTO products VALUES
 (101,'iPhone 14','Electronics','Apple',69999,TRUE),
 (102,'AirPods','Electronics','Apple',19999,TRUE),
 (103,'T-Shirt','Fashion','Puma',1499,TRUE),
@@ -38,13 +40,14 @@ INSERT INTO product VALUES
 (109,'Smart Watch','Electronics','Samsung',17999,TRUE),
 (110,'Backpack','Accessories','Wildcraft',2499,TRUE);
 
-CREATE TABLE Orders (
-    Order_ID INT AUTO_INCREMENT PRIMARY KEY,
-    Customer_ID INT,
-    Order_Date DATE,
-    Order_Status VARCHAR(50), -- Delivered, Cancelled, Returned
-    FOREIGN KEY (Customer_ID) REFERENCES Customer(Customer_ID)
+CREATE TABLE orders (
+    order_id INT PRIMARY KEY,
+    customer_id INT,
+    order_date DATE,
+    order_status VARCHAR(50),
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
 );
+
 INSERT INTO orders VALUES
 (1001,1,'2023-04-01','Delivered'),
 (1002,2,'2023-04-03','Cancelled'),
@@ -57,17 +60,18 @@ INSERT INTO orders VALUES
 (1009,9,'2023-04-25','Delivered'),
 (1010,1,'2023-04-28','Delivered');
 
-CREATE TABLE Order_Item (
-    Order_Item_ID INT AUTO_INCREMENT PRIMARY KEY,
-    Order_ID INT,
-    Product_ID INT,
-    Quantity INT NOT NULL,
-    Item_Price DECIMAL(10,2) NOT NULL,
-    FOREIGN KEY (Order_ID) REFERENCES Orders(Order_ID),
-    FOREIGN KEY (Product_ID) REFERENCES Product(Product_ID)
+
+CREATE TABLE order_items (
+    order_item_id INT PRIMARY KEY,
+    order_id INT,
+    product_id INT,
+    quantity INT NOT NULL,
+    item_price DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES orders(order_id),
+    FOREIGN KEY (product_id) REFERENCES products(product_id)
 );
 
-INSERT INTO order_item VALUES
+INSERT INTO order_items VALUES
 (1,1001,101,1,69999),
 (2,1001,102,1,19999),
 (3,1003,103,2,1499),
@@ -79,7 +83,6 @@ INSERT INTO order_item VALUES
 (9,1009,110,1,2499),
 (10,1010,102,1,19999);
 
-
 CREATE TABLE payments (
     payment_id INT PRIMARY KEY,
     order_id INT,
@@ -90,7 +93,7 @@ CREATE TABLE payments (
     FOREIGN KEY (order_id) REFERENCES orders(order_id)
 );
 
-    INSERT INTO payments VALUES
+INSERT INTO payments VALUES
 (501,1001,'2023-04-01','Card','Success',89998),
 (502,1002,'2023-04-03','UPI','Failed',1499),
 (503,1003,'2023-04-10','UPI','Success',2998),
@@ -102,15 +105,17 @@ CREATE TABLE payments (
 (509,1009,'2023-04-25','UPI','Success',2499),
 (510,1010,'2023-04-28','Card','Success',19999);
 
-    
-Create table return_(
-	return_id int primary key,
-    order_id int,product_id int,
-    return_date date ,
-    refund_amount decimal(10,2)
-    );
-    
-INSERT INTO return_ VALUES
+CREATE TABLE returns (
+    return_id INT PRIMARY KEY,
+    order_id INT,
+    product_id INT,
+    return_date DATE,
+    refund_amount DECIMAL(10,2),
+    FOREIGN KEY (order_id) REFERENCES orders(order_id),
+    FOREIGN KEY (product_id) REFERENCES products(product_id)
+);
+
+INSERT INTO returns VALUES
 (1,1006,104,'2023-04-20',2999),
 (2,1003,103,'2023-04-18',1499),
 (3,1008,107,'2023-04-25',3999),
